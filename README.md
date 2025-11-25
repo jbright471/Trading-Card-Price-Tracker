@@ -48,3 +48,9 @@ If you wish to use a different pricing source (e.g., TCGPlayer directly, Cardmar
 
 *   The script uses the Scryfall API. Please be respectful of their rate limits (the script includes a small delay between requests).
 *   If a card is not found, it will be skipped and noted in the console output.
+
+## How it was Built
+This tool was developed using a "Human-in-the-Loop" workflow leveraging **Google Antigravity** and **Gemini 3 Pro**.
+
+* **AI Role:** Accelerated the development lifecycle by handling `pandas` CSV implementation, API connectivity logic, and boilerplate generation.
+* **Developer Role:** Directed system architecture, refined API search parameters (implementing "Fuzzy Search" for better user experience), and engineered the file handling logic to ensure historical price data is preserved.
