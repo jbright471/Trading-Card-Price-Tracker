@@ -1,56 +1,67 @@
-# Card Price Tracker
+# Card Price Tracker (Ultimate Edition)
 
-A simple Python script to track the prices of your Magic: The Gathering card collection using the Scryfall API.
+A powerful Python script to track the value of your Magic: The Gathering card collection. It fetches real-time prices from Scryfall, tracks your portfolio history, calculates profit/loss, and generates a beautiful visual report.
+
+## Features
+
+*   **📈 Price History**: Tracks your total collection value over time and generates a line graph.
+*   **🖼️ Visual Report**: Creates an interactive HTML dashboard (`index.html`) with card images, prices, and stats.
+*   **💰 Profit/Loss Calculator**: See exactly how much money you've made (or lost) on each card.
+*   **🚨 Discord Alerts**: Get notified automatically when your collection value spikes.
+*   **📊 Excel Export**: Saves a detailed spreadsheet (`card_prices.xlsx`) with all your data.
 
 ## Setup
 
-1.  **Install Python**: Ensure you have Python installed on your system.
-2.  **Dependencies**: This script uses standard libraries, so no extra `pip install` is usually required. However, if you run into issues, check `requirements.txt` (if provided) or ensure you have a standard Python environment.
+1.  **Install Python**: Ensure you have Python installed.
+2.  **Install Dependencies**:
+    ```bash
+    pip install matplotlib openpyxl
+    ```
 
 ## Usage
 
-1.  **Add your cards**: Open `my_cards.txt` and list your cards, one per line.
-    *   Example: `Black Lotus`
-    *   You can also include collector numbers if you want a specific printing: `Black Lotus #001` (format may vary depending on how you want to track it, but the script tries to handle basic names best).
-2.  **Run the script**:
-    ```bash
-    python price_tracker.py
+### 1. Add Your Cards
+Open `my_cards.txt` and list your cards. You can add them in two ways:
+
+*   **Simple**: Just the name (and optional quantity).
+    ```text
+    Black Lotus
+    2x Sol Ring
     ```
-3.  **Check results**: The script will generate `card_prices.csv` with the current prices.
+*   **With Bought Price** (for Profit/Loss tracking): Add `| Price` after the name.
+    ```text
+    Black Lotus | 5000
+    Mox Pearl | 800.50
+    ```
+
+### 2. Configure Alerts (Optional)
+To get Discord notifications:
+1.  Open `price_tracker.py` in a text editor.
+2.  Find the line: `DISCORD_WEBHOOK_URL = ""`
+3.  Paste your Discord Webhook URL inside the quotes.
+4.  (Optional) Adjust `ALERT_THRESHOLD_PERCENT` to change when you get notified (default is 10%).
+
+### 3. Run the Tracker
+Double-click `price_tracker.py` or run it from the terminal:
+```bash
+python price_tracker.py
+```
 
 ## Output
 
-The `card_prices.csv` file will contain:
-*   Date of the scan
-*   Card Name
-*   Set Name
-*   Price (USD)
+*   **index.html**: Open this in your browser to see your **Visual Report**.
+*   **card_prices.xlsx**: The detailed spreadsheet of your collection.
+*   **price_history.csv**: The raw data log of your collection's value over time.
+*   **history_graph.png**: The image file of your value graph.
 
 ## API Usage
 
-This script uses the **[Scryfall API](https://scryfall.com/docs/api)** to fetch card prices. Scryfall is a powerful and free API for Magic: The Gathering cards.
-
-*   **Rate Limiting**: The script includes a small delay (0.1s) between requests to comply with Scryfall's rate limits and be a good citizen.
-*   **Data Source**: Prices are fetched from Scryfall's real-time data.
-
-## Using Other APIs
-
-If you wish to use a different pricing source (e.g., TCGPlayer directly, Cardmarket, etc.), you will need to modify the `get_card_data` function in `price_tracker.py`.
-
-1.  **Locate the function**: Find `def get_card_data(card_line):` in `price_tracker.py`.
-2.  **Replace the logic**:
-    *   Remove the Scryfall API calls (`urllib.request.urlopen(...)`).
-    *   Implement the API call for your desired service.
-    *   Ensure the function returns a dictionary with `name`, `set`, and `price` keys, or `None` if not found.
-3.  **Update parsing**: You might need to adjust how the card name and number are parsed if your new API expects a different format.
-
-## Notes
-
-*   The script uses the Scryfall API. Please be respectful of their rate limits (the script includes a small delay between requests).
-*   If a card is not found, it will be skipped and noted in the console output.
+This script uses the **[Scryfall API](https://scryfall.com/docs/api)**.
+*   **Rate Limiting**: Includes a built-in delay (0.1s) to respect Scryfall's guidelines.
+*   **Data**: Prices are fetched in real-time (USD).
 
 ## How it was Built
 This tool was developed using a "Human-in-the-Loop" workflow leveraging **Google Antigravity** and **Gemini 3 Pro**.
 
-* **AI Role:** Accelerated the development lifecycle by handling `pandas` CSV implementation, API connectivity logic, and boilerplate generation.
-* **Developer Role:** Directed system architecture, refined API search parameters (implementing "Fuzzy Search" for better user experience), and engineered the file handling logic to ensure historical price data is preserved.
+* **AI Role:** Accelerated development by implementing data visualization (`matplotlib`), HTML report generation, and Discord webhook integration.
+* **Developer Role:** Directed feature roadmap, designed the Profit/Loss logic, and ensured the tool remains user-friendly and robust.
