@@ -15,6 +15,35 @@ import matplotlib.dates as mdates
 # --- Configuration ---
 DISCORD_WEBHOOK_URL = "" 
 ALERT_THRESHOLD_PERCENT = 10.0 
+LAST_PRICES_FILE = 'last_run_prices.json'
+
+def load_last_prices():
+    try:
+        if os.path.exists(LAST_PRICES_FILE):
+            with open(LAST_PRICES_FILE, 'r') as f:
+                return json.load(f)
+    except Exception as e:
+        print(f"Error loading last prices: {e}")
+    return {}
+
+def save_last_prices(all_data):
+    prices = {}
+    for item in all_data:
+        # Create a unique key: Game|CardName
+        key = f"{item['data']['game']}|{item['data']['name']}"
+        # Store unit price if available
+        try:
+             # item['data']['price'] is a string like "12.50" or "N/A"
+             price_val = float(item['data']['price'])
+             prices[key] = price_val
+        except ValueError:
+            pass # Skip N/A or invalid prices
+    
+    try:
+        with open(LAST_PRICES_FILE, 'w') as f:
+            json.dump(prices, f, indent=2)
+    except Exception as e:
+        print(f"Error saving last prices: {e}")
 
 def clean_txt(file_path):
     if not os.path.exists(file_path):
@@ -333,6 +362,7 @@ def generate_html_report(collected_data, total_value, total_profit_loss):
                         <div class="card-set">{data['set']}</div>
                         <div class="card-price">
                             ${price_str}
+                            {item.get('trend_html', '')}
                             <span class="card-qty">x{qty}</span>
                         </div>
                         {pl_html}
@@ -436,6 +466,29 @@ def main():
     # Sort by price
     all_data.sort(key=lambda x: x['sort_val'], reverse=True)
 
+    # NEW: Calculate trends
+    last_prices = load_last_prices()
+    for item in all_data:
+        key = f"{item['data']['game']}|{item['data']['name']}"
+        item['trend'] = 'same' # Default
+        item['trend_html'] = ''
+        
+        try:
+            current_price = float(item['data']['price'])
+            if key in last_prices:
+                last_price = last_prices[key]
+                if current_price > last_price:
+                    item['trend'] = 'up'
+                    item['trend_html'] = '<span class="trend-icon trend-up" title="Price went UP">▲</span>'
+                elif current_price < last_price:
+                    item['trend'] = 'down'
+                    item['trend_html'] = '<span class="trend-icon trend-down" title="Price went DOWN">▼</span>'
+                else:
+                    item['trend'] = 'same'
+                    # item['trend_html'] = '<span class="trend-icon trend-same" title="Price unchanged">-</span>'
+        except ValueError:
+            item['trend'] = None # No price data
+
     # 1. Update Excel
     try:
         wb = openpyxl.Workbook()
@@ -470,8 +523,12 @@ def main():
     # 2. Update History & Graph
     update_history_and_graph(total_collection_value)
     
+
     # 3. Generate HTML Report
     generate_html_report(all_data, total_collection_value, total_profit_loss)
+    
+    # 4. Save prices for next run
+    save_last_prices(all_data)
 
 if __name__ == "__main__":
     main()

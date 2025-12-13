@@ -6,6 +6,7 @@ A powerful Python script to track the value of your **Magic: The Gathering** and
 
 *   **Two Games, One Tracker**: Combines MTG and YGO into one report.
 *   **📈 Price History**: Tracks your total collection value over time and generates a line graph.
+*   **🔼 Price Current Trends**: Shows ▲/▼ arrows to indicate if an individual card's price has changed since the last run.
 *   **🖼️ Visual Report**: Creates an interactive HTML dashboard (`index.html`) with card images, prices, and stats.
 *   **💰 Profit/Loss Calculator**: See exactly how much money you've made (or lost) on each card.
 *   **🚨 Discord Alerts**: Get notified automatically when your collection value spikes.
@@ -52,6 +53,7 @@ python price_tracker.py
 *   **index.html**: Open this in your browser to see your **Visual Report**.
 *   **MY_COLLECTION_PRICES.xlsx**: The detailed spreadsheet of your collection.
 *   **price_history.csv**: The raw data log of your collection's value over time.
+*   **last_run_prices.json**: Stores the prices from the last run to calculate trends.
 *   **history_graph.png**: The image file of your value graph.
 
 ## API Usage
